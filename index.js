@@ -16,7 +16,29 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+async function run() {
+  try {
+    const servicesCollection = client
+      .db("legalServices")
+      .collection("services");
 
+    app.get("/services", async (req, res) => {
+      const query = {};
+      const cursor = servicesCollection.find(query).limit(3);
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+
+    app.get("/allservices", async (req, res) => {
+      const query = {};
+      const cursor = servicesCollection.find(query);
+      const allservices = await cursor.toArray();
+      res.send(allservices);
+    });
+  } finally {
+  }
+}
+run().catch((err) => console.log(err));
 // initial api's
 app.get("/", (req, res) => {
   res.send("legal solution server is running");
