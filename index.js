@@ -21,6 +21,7 @@ async function run() {
     const servicesCollection = client
       .db("legalServices")
       .collection("services");
+    const userCollection = client.db("legalServices").collection("users");
 
     app.get("/services", async (req, res) => {
       const query = {};
@@ -41,6 +42,14 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const service = await servicesCollection.findOne(query);
       res.send(service);
+    });
+
+    app.post("/user", async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const result = await userCollection.insertOne(user);
+      console.log(result)
+      res.send(result);
     });
   } finally {
   }
