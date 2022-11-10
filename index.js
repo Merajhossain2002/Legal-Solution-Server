@@ -46,6 +46,16 @@ async function run() {
       res.send(allservices);
     });
 
+    app.get("/myreview/:uid", async (req, res) => {
+      const uid = req.params.uid;
+      const query = { uid: uid };
+      const myreview = await usersCollection.findOne(query);
+      console.log(myreview);
+      res.send(myreview);
+    });
+
+
+
     app.get("/services/:_id", async (req, res) => {
       const id = req.params._id;
       const query = { _id: ObjectId(id) };
