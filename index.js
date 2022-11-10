@@ -21,7 +21,7 @@ async function run() {
     const servicesCollection = client
       .db("legalServices")
       .collection("services");
-    const userCollection = client.db("legalServices").collection("users");
+    const usersCollection = client.db("legalServices").collection("users");
 
     app.get("/services", async (req, res) => {
       const query = {};
@@ -47,8 +47,25 @@ async function run() {
     app.post("/user", async (req, res) => {
       const user = req.body;
       console.log(user);
-      const result = await userCollection.insertOne(user);
-      console.log(result)
+      const result = await usersCollection.insertOne(user);
+      console.log(result);
+      res.send(result);
+    });
+
+    app.put("/addreview", async (req, res) => {
+      const reviewDetails = req.body;
+      console.log(reviewDetails);
+      const uid = reviewDetails.uid;
+      const id = reviewDetails.serviceId;
+      const query = { uid: uid };
+      const queryTwo = { _id: ObjectId(id) };
+      const result = await usersCollection.updateOne(query, {
+        $push: { userReview: reviewDetails },
+      });
+      const resultTwo = await servicesCollection.updateOne(queryTwo, {
+        $push: { serviceReviews: reviewDetails },
+      });
+      console.log(result, resultTwo);
       res.send(result);
     });
   } finally {
