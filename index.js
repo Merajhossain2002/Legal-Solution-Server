@@ -25,9 +25,18 @@ async function run() {
 
     app.get("/services", async (req, res) => {
       const query = {};
-      const cursor = servicesCollection.find(query).limit(3);
+      const options = {
+        sort: { serviceName: -1 },
+      };
+      const cursor = servicesCollection.find(query, options).limit(3);
       const services = await cursor.toArray();
       res.send(services);
+    });
+
+    app.post("/services", async (req, res) => {
+      const service = req.body;
+      const result = await servicesCollection.insertOne(service);
+      res.send(result);
     });
 
     app.get("/allservices", async (req, res) => {
@@ -46,15 +55,12 @@ async function run() {
 
     app.post("/user", async (req, res) => {
       const user = req.body;
-      console.log(user);
       const result = await usersCollection.insertOne(user);
-      console.log(result);
       res.send(result);
     });
 
     app.put("/addreview", async (req, res) => {
       const reviewDetails = req.body;
-      console.log(reviewDetails);
       const uid = reviewDetails.uid;
       const id = reviewDetails.serviceId;
       const query = { uid: uid };
@@ -65,7 +71,6 @@ async function run() {
       const resultTwo = await servicesCollection.updateOne(queryTwo, {
         $push: { serviceReviews: reviewDetails },
       });
-      console.log(result, resultTwo);
       res.send(result);
     });
   } finally {
